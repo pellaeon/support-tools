@@ -99,11 +99,12 @@ EOF
     export HOME=${HOMEDIR}
 
     if [[ $OS_TYPE = "ubuntu" ]]; then
-        if ! dpkg -s chef-server &>/dev/null; then
+		if [[ ! -e "/tmp/chef-server.deb" ]]; then
             curl -L "http://www.opscode.com/chef/download-server?p=ubuntu&pv=${OS_VER}&m=x86_64&v=${CHEF_SERVER_VERSION}" > /tmp/chef-server.deb
+		fi
+        if ! dpkg -s chef-server &>/dev/null; then
             dpkg -i /tmp/chef-server.deb
             chef-server-ctl reconfigure
-            rm -f /tmp/chef-server.deb
         fi
     else
         if ! rpm -q chef-server &>/dev/null; then
