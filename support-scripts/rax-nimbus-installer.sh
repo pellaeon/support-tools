@@ -41,6 +41,7 @@ set -e
 set -u
 
 
+DATACENTER=${DATACENTER:-"rpc"}
 WORKING_DIR="/tmp"
 NIMBUS_INSTALLER_TAR="${WORKING_DIR}/nimbus-installer.tar.gz"
 NIMBUS_INIT="/etc/init.d/nimbus"
@@ -73,7 +74,7 @@ pushd ${WORKING_DIR}/nimbus-installer
   sudo python nimbusinstaller.py -A "$(cat /root/.rackspace/customer_number)" \
                                  -S "$(cat /root/.rackspace/server_number)" \
                                  -I "$(curl -s icanhazip.com)" \
-                                 -D "$(cat /root/.rackspace/datacenter | tr [A-Z] [a-z] | tr [:digit:] ' ')"
+                                 -D ${DATACENTER}
 popd
 
 
@@ -81,7 +82,7 @@ popd
 if [[ "$(grep -i -e redhat -e centos /etc/redhat-release)" ]];then
   chkconfig nimbus on
 elif [[ "$(grep -i ubuntu /etc/lsb-release)" ]];then
-  update-rc.d nimbus defaults 99
+  update-rc.d nimbus start 99 2 3 4 5 . stop 99 0 1 6 .
 fi
 
 
