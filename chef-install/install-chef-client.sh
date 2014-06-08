@@ -15,14 +15,14 @@
 # limitations under the License.
 
 if [ $# -eq 0 ]; then
-   echo "Usage: $0 <HOST> <PORT>"
+   echo "Usage: $0 <MY_IP> <HOST> <PORT>"
    echo
    echo "<PORT> will default to 22 if not specified."
    exit 1 
 fi
 
-HOST=$1
-PORT=$2
+HOST=$2 # host to install chef-client on
+PORT=$3
 
 # If PORT is not set, default to 22
 : ${PORT:="22"}
@@ -31,7 +31,7 @@ CLIENT_VERSION=${CLIENT_VERSION:-"11.2.0-1"}
 ENVIRONMENT=${ENVIRONMENT:-_default}
 
 PRIMARY_INTERFACE=$(ip route list match 0.0.0.0 | awk 'NR==1 {print $5}')
-MY_IP=$(ip addr show dev ${PRIMARY_INTERFACE} | awk 'NR==3 {print $2}' | cut -d '/' -f1)
+MY_IP=$1
 CHEF_FE_SSL_PORT=${CHEF_FE_SSL_PORT:-443}
 CHEF_URL=${CHEF_URL:-https://${MY_IP}:${CHEF_FE_SSL_PORT}}
 
